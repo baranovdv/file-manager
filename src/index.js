@@ -2,6 +2,8 @@ import { createInterface } from 'readline'
 import os from 'os'
 import path from 'path'
 import up from './modules/up.js'
+import currentdirConsole from './modules/currentdirConsole.js'
+import readfFilenames from './modules/readfFilenames.js'
 
 const app = async () => {
   const envArgs = process.argv
@@ -22,14 +24,14 @@ const app = async () => {
     output: process.stdout,
   }); 
 
-  console.log(`You are currently in ${currentdir}`)
+  currentdirConsole(currentdir)
 
   rl.on('SIGINT', () => {
     console.log(`Thank you for using File Manager, ${username}, goodbye!`)
     process.exit()
   })
 
-  rl.on('line', (line) => {
+  rl.on('line', async (line) => {
     if(line === '.exit') {
       console.log(`Thank you for using File Manager, ${username}, goodbye!`)
       process.exit()
@@ -38,7 +40,16 @@ const app = async () => {
     if(line === 'up') {
       if (currentdir !== rootdir) currentdir = up(currentdir)
 
-      console.log(`You are currently in ${currentdir}`)
+      currentdirConsole(currentdir)
+      return
+    }
+
+    if(line === 'ls') {
+      const parsedFiles = await readfFilenames(currentdir)
+
+      console.table(parsedFiles)
+
+      currentdirConsole(currentdir)
       return
     }
 
@@ -51,4 +62,4 @@ const app = async () => {
   // })
 }
 
-app()
+await app()
