@@ -5,7 +5,6 @@ import argvParser from './helpers/argvParser.js'
 import { currentdirMessage, goodbyeMessage, greetingsMessage } from './helpers/consoleMessages.js'
 import handleCommand from './handleCommand/handleCommand.js'
 
-
 const app = async () => {
   const state = {}
   const envArgs = process.argv
@@ -33,12 +32,10 @@ const app = async () => {
     })
 
     rl.on('line', async (line) => {
-      
       const lineParsed = line.trim().split(' ')
       const command = lineParsed.shift()
 
-
-      handleCommand(state, command, ...lineParsed)
+      await handleCommand(state, command, ...lineParsed)
     })
   } catch (error) {
     console.error(error.message)

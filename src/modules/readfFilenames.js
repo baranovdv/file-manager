@@ -1,4 +1,4 @@
-import fs from 'fs/promises'
+import fs from 'fs'
 import parseReadFiles from "./parseReadFiles.js"
 
 export default async function readfFilenames(currentdir) {

@@ -10,9 +10,10 @@ export function up(state) {
   return dirUp.length < 2 ? `${dirUp}${separator}` : dirUp.join(separator)
 }
 
-export function changedir(state, newdir) {
+export async function cd(state, newdir) {
   const separator = sep
 
+  let currentdirFolders = await readfFilenames(state.currentdir)
 
 }
 
