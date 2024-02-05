@@ -1,10 +1,8 @@
 import path from 'path'
-import { createReadStream } from 'fs'
-import { access, rename, rm, writeFile } from 'fs/promises'
-import readfFilenames from '../helpers/readfFilenames.js'
-import { pipeline } from 'stream'
+import { createReadStream, createWriteStream } from 'fs'
+import { copyFile, mkdir, rename, rm, rmdir, stat, writeFile } from 'fs/promises'
 import resolveFilename from '../helpers/resolveFilename.js'
-
+import { pipeline } from 'stream/promises'
 
 export async function cat(state, filename) {
   try {
@@ -45,9 +43,30 @@ export async function rn(state, filename, newfilename) {
 
 export async function rmc(state, filename) {
   const currentFilePath = await resolveFilename(state, filename)
-  
   try {
-    await rm(currentFilePath)
+    const stats = await stat(currentFilePath)
+
+    if (stats.isDirectory()) {
+      await rm(currentFilePath, { recursive: true })
+    } else {
+      await rm(currentFilePath)
+    }
+  } catch {
+    throw new Error('Operation failed')
+  }
+}
+
+export async function cp(state, filenamepath, newdir) {
+  try {
+    const currentFilePath = await resolveFilename(state, filenamepath)
+    const filename = currentFilePath.split(path.sep).slice(-1)[0]
+    const destFilePath = path.join(newdir, filename)
+
+    const srcStream = createReadStream(currentFilePath, 'utf-8')
+    await mkdir(newdir, { recursive: true })
+    const destStream = createWriteStream(destFilePath, { flags: 'w' })
+    await pipeline(srcStream, destStream)
+
   } catch {
     throw new Error('Operation failed')
   }
