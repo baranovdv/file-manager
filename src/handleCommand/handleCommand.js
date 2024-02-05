@@ -54,7 +54,7 @@ export default async function handleCommand(state, command, ...args) {
         break
 
       case 'hash':
-        hash(state, args[0])
+        await hash(state, args[0])
         break
 
       default: throw new Error('Invalid input')
