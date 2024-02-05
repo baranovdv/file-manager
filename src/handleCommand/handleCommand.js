@@ -3,6 +3,7 @@ import hash from "../hash/hash.js";
 import { currentdirMessage, goodbyeMessage } from "../helpers/consoleMessages.js";
 import { cd, ls, up } from "../navigation/navigation.js";
 import osc from "../os/os.js";
+import { compress, decompress } from "../zip/zip.js";
 
 export default async function handleCommand(state, command, ...args) {
   try {
@@ -55,6 +56,14 @@ export default async function handleCommand(state, command, ...args) {
 
       case 'hash':
         await hash(state, args[0])
+        break
+
+      case 'compress':
+        await compress(state, args[0], args[1])
+        break
+
+      case 'decompress':
+        await decompress(state, args[0], args[1])
         break
 
       default: throw new Error('Invalid input')
