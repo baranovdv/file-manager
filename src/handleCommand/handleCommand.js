@@ -1,4 +1,4 @@
-import { cat } from "../file/file.js";
+import { add, cat, rn } from "../file/file.js";
 import { currentdirMessage, goodbyeMessage } from "../helpers/consoleMessages.js";
 import { cd, ls, up } from "../navigation/navigation.js";
 
@@ -22,6 +22,15 @@ export default async function handleCommand(state, command, ...args) {
 
       case 'cat':
         await cat(state, args[0])
+        break
+
+      case 'add':
+        await add(state, args[0])
+        break
+
+      case 'rn':
+        if (args.length < 2) throw new Error('Invalid input')
+        await rn(state, args[0], args[1])
         break
 
       default: throw new Error('Invalid input')
