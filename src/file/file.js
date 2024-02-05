@@ -1,6 +1,6 @@
 import path from 'path'
 import { createReadStream, createWriteStream } from 'fs'
-import { copyFile, mkdir, rename, rm, rmdir, stat, writeFile } from 'fs/promises'
+import { mkdir, rename, rm, stat, writeFile } from 'fs/promises'
 import resolveFilename from '../helpers/resolveFilename.js'
 import { pipeline } from 'stream/promises'
 
@@ -71,3 +71,13 @@ export async function cp(state, filenamepath, newdir) {
     throw new Error('Operation failed')
   }
 }
+
+export async function mv(state, filenamepath, newdir) {
+  try {
+    await cp(state, filenamepath, newdir)
+    await rmc(state, filenamepath)
+  } catch {
+    throw new Error('Operation failed')
+  }
+}
+
