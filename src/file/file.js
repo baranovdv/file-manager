@@ -1,6 +1,6 @@
-import path, { dirname } from 'path'
+import path from 'path'
 import { createReadStream } from 'fs'
-import { access, rename, writeFile } from 'fs/promises'
+import { access, rename, rm, writeFile } from 'fs/promises'
 import readfFilenames from '../helpers/readfFilenames.js'
 import { pipeline } from 'stream'
 import resolveFilename from '../helpers/resolveFilename.js'
@@ -38,6 +38,16 @@ export async function rn(state, filename, newfilename) {
   
   try {
     await rename(currentFilePath, newFilePath)
+  } catch {
+    throw new Error('Operation failed')
+  }
+}
+
+export async function rmc(state, filename) {
+  const currentFilePath = await resolveFilename(state, filename)
+  
+  try {
+    await rm(currentFilePath)
   } catch {
     throw new Error('Operation failed')
   }

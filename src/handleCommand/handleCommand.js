@@ -1,4 +1,4 @@
-import { add, cat, rn } from "../file/file.js";
+import { add, cat, rmc, rn } from "../file/file.js";
 import { currentdirMessage, goodbyeMessage } from "../helpers/consoleMessages.js";
 import { cd, ls, up } from "../navigation/navigation.js";
 
@@ -26,6 +26,10 @@ export default async function handleCommand(state, command, ...args) {
 
       case 'add':
         await add(state, args[0])
+        break
+
+      case 'rm':
+        await rmc(state, args[0])
         break
 
       case 'rn':
