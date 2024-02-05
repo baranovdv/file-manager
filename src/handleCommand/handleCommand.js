@@ -1,11 +1,14 @@
 import { add, cat, cp, mv, rmc, rn } from "../file/file.js";
 import hash from "../hash/hash.js";
+import checkArgs from "../helpers/checkArgs.js";
 import { currentdirMessage, goodbyeMessage } from "../helpers/consoleMessages.js";
 import { cd, ls, up } from "../navigation/navigation.js";
 import osc from "../os/os.js";
 import { compress, decompress } from "../zip/zip.js";
 
-export default async function handleCommand(state, command, ...args) {
+export default async function handleCommand(state, command, ...inputArgs) {
+  const args = checkArgs(inputArgs)
+
   try {
     switch(command) {
       case '.exit':
