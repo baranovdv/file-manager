@@ -1,14 +1,14 @@
 import { currentdirMessage, goodbyeMessage } from "../helpers/consoleMessages.js";
-import { cd, ls } from "../navigation/navigation.js";
+import { cd, ls, up } from "../navigation/navigation.js";
 
-export default async function handleCommand(state, command, args) {
+export default async function handleCommand(state, command, ...args) {
   try {
     switch(command) {
       case '.exit':
         goodbyeMessage(state.username)
         process.exit()
       case 'up':
-
+        up(state)
         break
 
       case 'cd':
