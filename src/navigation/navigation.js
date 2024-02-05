@@ -11,21 +11,22 @@ export function up(state) {
 }
 
 export async function cd(state, newdir) {
-  let currentdirFolders = await readfFilenames(state.currentdir)
-  currentdirFolders = currentdirFolders.filter((file) => file.type === 'directory')
-
-  if (currentdirFolders.some((dir) => dir.name === newdir)) {
-
-    state.currentdir = createPath(state.currentdir, newdir)
-    return
-  }
-
+  const currentdirItems = await readfFilenames(state.currentdir)
+  const currentdirFolders = currentdirItems.filter((file) => file.type === 'directory')
   try {
-    const newdirAccess = await fs.access(newdir)
-    state.currentdir = newdir
-    return
+    if (currentdirFolders.some((dir) => dir.name === newdir)) {
+      state.currentdir = createPath(state.currentdir, newdir)
+
+      return
+    } else {
+      await fs.access(newdir)
+
+      state.currentdir = newdir
+
+      return
+    }
   } catch {
-    throw new Error('Invalid input')
+    throw new Error('Operation failed')
   }
 }
 
