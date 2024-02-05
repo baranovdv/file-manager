@@ -1,54 +1,45 @@
 import { createInterface } from 'readline'
 import os from 'os'
 import path from 'path'
-import up from './modules/up.js'
+import argvParser from './helpers/argvParser.js'
+import { currentdirMessage, goodbyeMessage, greetingsMessage } from './helpers/consoleMessages.js'
+import handleCommand from './handleCommand/handleCommand.js'
 
 const app = async () => {
+  const state = {}
   const envArgs = process.argv
-  const usernameArg = envArgs[2]
-  const homedir = os.homedir()
-  const rootdir = path.resolve("/")
+  const argsParsed = argvParser(envArgs)
 
-  let username = ''
-  let currentdir = homedir 
+  state.username = argsParsed.username ?? 'Guest'
+  state.homedir = os.homedir()
+  state.rootdir = path.resolve("/")
+  state.currentdir = state.homedir
 
-  if (usernameArg.startsWith('--username=')) {
-    username = usernameArg.split('=')[1]
-    console.log(`Welcome to the File Manager, ${username}!`)
-  } else return
+
+  greetingsMessage(state.username)
 
   const rl = createInterface({
     input: process.stdin,
     output: process.stdout,
   }); 
 
-  console.log(`You are currently in ${currentdir}`)
+  currentdirMessage(state.currentdir)
 
-  rl.on('SIGINT', () => {
-    console.log(`Thank you for using File Manager, ${username}, goodbye!`)
-    process.exit()
-  })
-
-  rl.on('line', (line) => {
-    if(line === '.exit') {
-      console.log(`Thank you for using File Manager, ${username}, goodbye!`)
+  try {
+    rl.on('SIGINT', () => {
+      goodbyeMessage(state.username)
       process.exit()
-    }
+    })
 
-    if(line === 'up') {
-      if (currentdir !== rootdir) currentdir = up(currentdir)
+    rl.on('line', async (line) => {
+      const lineParsed = line.trim().split(' ')
+      const command = lineParsed.shift()
 
-      console.log(`You are currently in ${currentdir}`)
-      return
-    }
-
-    console.log('Invalid input')
-    // console.log(`You are currently in ${currentdir}`)
-  }); 
-
-  // process.stdin.on('data', (chunk) => {
-  //   console.log(chunk)
-  // })
+      await handleCommand(state, command, ...lineParsed)
+    })
+  } catch (error) {
+    console.error(error.message)
+  }
 }
 
-app()
+await app()
