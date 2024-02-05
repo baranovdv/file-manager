@@ -9,11 +9,12 @@ export async function cat(state, filename) {
     const readFilePath = await resolveFilename(state, filename)
     const readStream = createReadStream(readFilePath, 'utf-8');
 
-    readStream.pipe(process.stdout)
     readStream.on('end', () => {
       console.log('')
     })
-    
+
+    await pipeline(readStream, process.stdout, { end: false });
+
   } catch {
     throw new Error('Operation failed')
   }
